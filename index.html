@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>aiinfinite · 个人软件开发 | 定制软件开发工作室</title>
+<meta name="description" content="aiinfinite 个人软件开发工作室：网站 / 小程序 / App / 管理系统 / Python 自动化定制开发。一人对接，源码全交付，长期维护。">
+<link rel="icon" href="assets/aiinfinite-logo-flow-compact.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ==================================================
+   统一色系：深海军蓝 + 金色（唯一强调色）
+   ================================================== */
+:root{
+  --navy-950:#04101F;
+  --navy-900:#0A1428;
+  --navy-800:#0E1B30;
+  --navy-700:#152642;
+  --navy-500:#1D3357;
+  --gold:#FFD76A;
+  --gold-deep:#C99417;
+  --gold-soft:rgba(255,215,106,.14);
+  --ink:#16233A;
+  --ink-soft:#44536B;
+  --ink-mute:#7B8AA0;
+  --paper:#FFFFFF;
+  --paper-dim:#F5F7FA;
+  --line:#E5E9F0;
+  --serif:'Noto Serif SC','Songti SC','SimSun',serif;
+  --sans:'Noto Sans SC','PingFang SC','Microsoft YaHei',sans-serif;
+  --shadow-card:0 10px 40px rgba(4,16,31,.08);
+  --shadow-card-hover:0 22px 60px rgba(4,16,31,.16);
+  --radius:14px;
+  --wrap:1180px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);color:var(--ink);background:var(--paper);line-height:1.75;font-size:16px;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+ul{list-style:none}
+button{font-family:inherit;cursor:pointer}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 24px}
+
+/* ============ 入场动画关键帧（大幅度、可感知） ============ */
+@keyframes fadeUp{from{opacity:0;transform:translateY(76px)}to{opacity:1;transform:none}}
+@keyframes fadeLeft{from{opacity:0;transform:translateX(-110px)}to{opacity:1;transform:none}}
+@keyframes fadeRight{from{opacity:0;transform:translateX(110px)}to{opacity:1;transform:none}}
+@keyframes zoomIn{from{opacity:0;transform:scale(.76) translateY(56px)}to{opacity:1;transform:none}}
+@keyframes popIn{0%{opacity:0;transform:scale(.25)}70%{opacity:1;transform:scale(1.12)}100%{opacity:1;transform:scale(1)}}
+@keyframes imgSettle{from{transform:scale(1.32)}to{transform:scale(1)}}
+@keyframes lineGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes enTrack{from{letter-spacing:.85em}to{letter-spacing:.4em}}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes iconSwing{0%{transform:rotate(0)}22%{transform:rotate(-12deg) scale(1.14)}55%{transform:rotate(9deg) scale(1.06)}80%{transform:rotate(-4deg)}100%{transform:rotate(0)}}
+@keyframes kenburns{from{transform:scale(1)}to{transform:scale(1.12)}}
+@keyframes drip{0%{transform:scaleY(0);transform-origin:top}55%{transform:scaleY(1);transform-origin:top}56%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* 滚动显现：进入视口后播放入场动画 */
+.reveal{opacity:0}
+.reveal.in{animation:fadeUp 1.05s cubic-bezier(.16,1,.3,1) both}
+.reveal.rl.in{animation-name:fadeLeft}
+.reveal.rr.in{animation-name:fadeRight}
+.reveal.rz.in{animation-name:zoomIn}
+.d1{animation-delay:.12s}.d2{animation-delay:.24s}.d3{animation-delay:.36s}.d4{animation-delay:.48s}.d5{animation-delay:.6s}
+/* 分区标题：英文小字距收拢 + 装饰线生长 */
+.reveal.in .sec-en{animation:enTrack 1.1s cubic-bezier(.16,1,.3,1) .15s both}
+.reveal.in .sec-line{animation:lineGrow 1s .5s cubic-bezier(.16,1,.3,1) both}
+/* 案例图片：从放大收拢 */
+.case-img{transform:scale(1);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.case-card.in .case-img{animation:imgSettle 1.7s cubic-bezier(.16,1,.3,1) backwards}
+.case-card:hover .case-img{transform:scale(1.09)}
+/* 流程图标：逐个弹出 */
+.step .step-dot{transform:scale(.3);opacity:0;transition:transform .65s cubic-bezier(.34,1.56,.64,1),opacity .4s ease}
+.step.in .step-dot{transform:scale(1);opacity:1}
+.step:nth-child(2) .step-dot{transition-delay:.12s}
+.step:nth-child(3) .step-dot{transition-delay:.24s}
+.step:nth-child(4) .step-dot{transition-delay:.36s}
+.step:nth-child(5) .step-dot{transition-delay:.48s}
+/* 顶部滚动进度条 */
+.scroll-progress{position:fixed;top:0;left:0;height:3px;width:100%;z-index:300;background:linear-gradient(90deg,var(--gold),var(--gold-deep));transform-origin:left;transform:scaleX(0);pointer-events:none}
+
+/* ============ 打开网站的开场动画（Loading 遮罩） ============ */
+.loader{position:fixed;inset:0;z-index:999;background:var(--navy-950);display:flex;align-items:center;justify-content:center;animation:loaderOut .55s ease .95s forwards}
+.loader img{height:74px;width:auto;animation:loaderGlow 1.4s ease-in-out infinite}
+@keyframes loaderGlow{0%,100%{filter:drop-shadow(0 0 8px rgba(255,215,106,.3));opacity:.82}50%{filter:drop-shadow(0 0 22px rgba(255,215,106,.6));opacity:1}}
+@keyframes loaderOut{to{opacity:0;visibility:hidden}}
+
+/* ============ 导航（常驻实底深蓝，金色细线分隔，滚动加投影） ============ */
+.header{position:sticky;top:0;z-index:100;background:rgba(4,16,31,.98);border-bottom:1px solid rgba(255,215,106,.18);transition:box-shadow .4s}
+.header.solid{box-shadow:0 12px 32px rgba(2,8,18,.55)}
+.header .wrap{display:flex;align-items:center;justify-content:space-between;height:77px}
+.brand img{height:50px;width:auto}
+.nav{display:flex;align-items:center;gap:34px}
+.nav a.nav-link{color:#D7E2F2;font-size:14.5px;letter-spacing:.05em;position:relative;padding:6px 0;transition:color .25s}
+.nav a.nav-link::after{content:'';position:absolute;left:0;bottom:0;width:0;height:2px;background:var(--gold);transition:width .3s}
+.nav a.nav-link:hover{color:#fff}
+.nav a.nav-link:hover::after{width:100%}
+.nav .nav-cta{background:var(--gold);color:var(--navy-950);font-weight:700;font-size:14px;padding:10px 22px;border-radius:999px;letter-spacing:.04em;transition:transform .25s,box-shadow .25s}
+.nav .nav-cta:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,215,106,.4)}
+.burger{display:none;background:none;border:none;width:42px;height:42px;flex-direction:column;justify-content:center;align-items:center;gap:5px;position:relative;z-index:120}
+.burger span{display:block;width:22px;height:2px;background:#fff;transition:.3s}
+.burger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.open span:nth-child(2){opacity:0}
+.burger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:920px){
+  .nav{position:fixed;inset:0;background:rgba(4,16,31,.98);flex-direction:column;justify-content:center;gap:0;padding:60px 0 40px;opacity:0;visibility:hidden;transform:translateY(-14px);transition:opacity .3s,transform .35s,visibility .3s;z-index:99}
+  .nav.open{opacity:1;visibility:visible;transform:none}
+  .nav a.nav-link{padding:13px 0;font-size:16px}
+  .nav .nav-cta{margin-top:14px}
+  .burger{display:flex}
+}
+
+/* ============ Hero（深色大图 + 入场动画） ============ */
+.hero{position:relative;min-height:calc(100vh - 78px);display:flex;align-items:center;background:var(--navy-950);overflow:hidden}
+.hero .hero-bg{position:absolute;inset:0;background:url('assets/hero-code.jpg') center/cover no-repeat;opacity:.42;animation:kenburns 24s ease-in-out infinite alternate}
+.hero .hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,16,31,.72) 0%,rgba(4,16,31,.52) 45%,rgba(4,16,31,.94) 100%)}
+.hero .hero-inner{position:relative;z-index:2;text-align:center;width:100%;padding:120px 24px 190px}
+.hero .ha{opacity:0;animation:fadeUp .95s cubic-bezier(.22,.8,.3,1) forwards}
+.hero .ha1{animation-delay:1.15s}
+.hero .ha2{animation-delay:1.3s}
+.hero .ha3{animation-delay:1.45s}
+.hero .ha4{animation-delay:1.6s}
+.hero .ha5{animation-delay:1.75s}
+.hero .hero-kicker{display:inline-flex;align-items:center;gap:10px;color:#F0DFAC;font-size:13.5px;letter-spacing:.42em;text-transform:uppercase;border:1px solid rgba(255,215,106,.38);padding:9px 22px;border-radius:999px;margin-bottom:34px;background:rgba(4,16,31,.35)}
+.hero .hero-kicker svg{width:14px;height:14px;color:var(--gold)}
+.hero h1{font-family:var(--serif);color:#fff;font-size:clamp(34px,5.4vw,66px);font-weight:900;letter-spacing:.06em;line-height:1.3;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+.hero .hero-en{color:#93A9C9;font-size:clamp(11px,1.3vw,15px);letter-spacing:.5em;text-transform:uppercase;margin:22px 0 26px}
+.hero .hero-sub{color:#C3D1E6;font-size:clamp(15px,1.5vw,17.5px);max-width:640px;margin:0 auto 44px;font-weight:300}
+.hero .hero-sub strong{color:var(--gold);font-weight:500}
+.hero-actions{display:flex;gap:18px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:9px;padding:15px 34px;border-radius:999px;font-size:15.5px;letter-spacing:.06em;transition:transform .25s,box-shadow .25s,background .25s;border:none}
+.btn svg{width:16px;height:16px}
+.btn-gold{background:var(--gold);color:var(--navy-950);font-weight:700}
+.btn-gold:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(255,215,106,.4)}
+.btn-ghost{background:transparent;color:#E7EEF9;border:1px solid rgba(231,238,249,.5)}
+.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:#fff;transform:translateY(-3px)}
+.hero .scroll-hint{position:absolute;left:50%;bottom:26px;transform:translateX(-50%);color:#8CA1BE;font-size:11px;letter-spacing:.3em;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:2;opacity:0;animation:fadeUp .8s 2.1s forwards}
+.hero .scroll-hint::after{content:'';width:1px;height:34px;background:linear-gradient(180deg,#8CA1BE,transparent);animation:drip 2s infinite}
+
+/* ============ 数据条（叠在 Hero 底部，半透明） ============ */
+.stats{position:absolute;left:0;right:0;bottom:0;z-index:3;background:rgba(4,16,31,.55);backdrop-filter:blur(8px);border-top:1px solid rgba(255,215,106,.22);padding:20px 0 18px}
+.stats .wrap{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.stat{text-align:center;position:relative}
+.stat + .stat::before{content:'';position:absolute;left:0;top:12%;height:76%;width:1px;background:linear-gradient(180deg,transparent,rgba(255,215,106,.32),transparent)}
+.stat .num{font-family:var(--serif);color:var(--gold);font-size:clamp(28px,3.2vw,40px);font-weight:900;line-height:1.1}
+.stat .num small{font-size:.55em;margin-left:2px}
+.stat .label{color:#9AA9C4;font-size:13px;margin-top:6px;letter-spacing:.12em}
+@media(max-width:768px){.stats .wrap{grid-template-columns:repeat(2,1fr);gap:26px 12px}.stat:nth-child(3)::before{display:none}}
+.hero .scroll-hint{position:absolute;left:50%;bottom:128px;transform:translateX(-50%);color:#8CA1BE;font-size:11px;letter-spacing:.3em;display:flex;flex-direction:column;align-items:center;gap:8px;z-index:3;opacity:0;animation:fadeUp .8s 2.1s forwards}
+.hero .scroll-hint::after{content:'';width:1px;height:30px;background:linear-gradient(180deg,#8CA1BE,transparent);animation:drip 2s infinite}
+
+/* ============ 分区标题（双语） ============ */
+.section{padding:96px 0}
+.section.dim{background:var(--paper-dim)}
+.sec-head{text-align:center;max-width:660px;margin:0 auto 64px}
+.sec-head .sec-en{color:var(--gold-deep);font-size:12px;letter-spacing:.4em;text-transform:uppercase;margin-bottom:14px;font-weight:500}
+.sec-head h2{font-family:var(--serif);font-size:clamp(26px,3.2vw,38px);font-weight:900;letter-spacing:.05em;color:var(--ink);line-height:1.35}
+.sec-head h2 em{font-style:normal;color:transparent;background:linear-gradient(120deg,var(--gold-deep),#E8B93E);-webkit-background-clip:text;background-clip:text}
+.sec-head .sec-line{width:56px;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-deep));margin:22px auto 0;border-radius:2px}
+.sec-head .sec-desc{color:var(--ink-soft);margin-top:20px;font-size:15.5px}
+
+/* ============ 服务 ============ */
+.svc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.svc-card{--mx:50%;--my:50%;background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:38px 30px 32px;position:relative;overflow:hidden;transition:transform .35s,box-shadow .35s,border-color .35s}
+.svc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--gold),var(--gold-deep));transform:scaleX(0);transform-origin:left;transition:transform .4s}
+.svc-card::after{content:'';position:absolute;inset:0;border-radius:var(--radius);background:radial-gradient(340px circle at var(--mx) var(--my),rgba(255,215,106,.1),transparent 62%);opacity:0;transition:opacity .4s;pointer-events:none}
+.svc-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-card-hover);border-color:transparent}
+.svc-card:hover::before{transform:scaleX(1)}
+.svc-card:hover::after{opacity:1}
+.svc-icon{position:relative;width:58px;height:58px;border-radius:14px;background:linear-gradient(135deg,var(--navy-900),var(--navy-700));display:flex;align-items:center;justify-content:center;margin-bottom:24px;overflow:hidden;transition:background .35s,transform .45s cubic-bezier(.34,1.56,.64,1),box-shadow .35s}
+.svc-icon::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 22%,rgba(255,255,255,.16),transparent 58%)}
+.svc-icon svg{width:27px;height:27px;color:var(--gold);position:relative;z-index:1}
+.svc-icon svg path,.svc-icon svg circle,.svc-icon svg rect,.svc-icon svg line,.svc-icon svg polyline,.svc-icon svg polygon{stroke-dasharray:1;stroke-dashoffset:1}
+.svc-card.in .svc-icon{animation:popIn .8s cubic-bezier(.34,1.56,.64,1) .5s backwards}
+.svc-card.in .svc-icon svg path,.svc-card.in .svc-icon svg circle,.svc-card.in .svc-icon svg rect,.svc-card.in .svc-icon svg line,.svc-card.in .svc-icon svg polyline,.svc-card.in .svc-icon svg polygon{animation:draw 1.25s cubic-bezier(.4,0,.2,1) .75s forwards}
+.svc-card:hover .svc-icon{background:linear-gradient(135deg,var(--gold),var(--gold-deep));transform:translateY(-5px) rotate(-4deg);box-shadow:0 14px 30px rgba(201,148,23,.4)}
+.svc-card:hover .svc-icon svg{color:var(--navy-950);animation:iconSwing .9s cubic-bezier(.34,1.56,.64,1)}
+.svc-card:hover .svc-icon svg path,.svc-card:hover .svc-icon svg circle,.svc-card:hover .svc-icon svg rect,.svc-card:hover .svc-icon svg line,.svc-card:hover .svc-icon svg polyline,.svc-card:hover .svc-icon svg polygon{animation:none;stroke-dashoffset:0}
+.svc-card h3{font-family:var(--serif);font-size:19.5px;font-weight:700;letter-spacing:.03em;margin-bottom:12px;transition:color .3s}
+.svc-card:hover h3{color:var(--navy-700)}
+.svc-card p{color:var(--ink-soft);font-size:14.5px;margin-bottom:18px}
+.svc-tags{display:flex;flex-wrap:wrap;gap:8px}
+.svc-tags span{font-size:11.5px;color:#6B7686;background:#F3F5F8;border:1px solid var(--line);border-radius:999px;padding:3px 11px;letter-spacing:.03em;transition:.3s}
+.svc-card:hover .svc-tags span{border-color:rgba(201,148,23,.5);color:var(--gold-deep);background:#FDFAF1}
+.svc-card:hover .svc-tags span:nth-child(2){transition-delay:.07s}
+.svc-card:hover .svc-tags span:nth-child(3){transition-delay:.14s}
+.svc-more{display:inline-flex;align-items:center;gap:7px;margin-top:20px;color:var(--gold-deep);font-size:13.5px;font-weight:500;letter-spacing:.06em;opacity:0;transform:translateX(-12px);transition:opacity .35s,transform .35s}
+.svc-more svg{width:15px;height:15px;transition:transform .3s}
+.svc-card:hover .svc-more{opacity:1;transform:none}
+.svc-more:hover svg{transform:translateX(4px)}
+@media(max-width:1024px){.svc-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.svc-grid{grid-template-columns:1fr}}
+
+/* ============ 为什么选我（交替行，左右滑入） ============ */
+.why-row{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center;margin-bottom:88px}
+.why-row:last-child{margin-bottom:0}
+.why-row.reverse .why-visual{order:2}
+.why-visual{position:relative}
+.why-panel{border-radius:18px;min-height:340px;position:relative;overflow:hidden;border:1px solid var(--line);background:var(--navy-900);transition:transform .5s cubic-bezier(.16,1,.3,1),box-shadow .5s}
+.why-visual:hover .why-panel{transform:translateY(-8px);box-shadow:var(--shadow-card-hover)}
+.why-panel .why-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1);transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.why-visual.in .why-img{animation:imgSettle 1.7s cubic-bezier(.16,1,.3,1) backwards}
+.why-visual:hover .why-img{transform:scale(1.06)}
+.why-panel::after{content:'';position:absolute;inset:0;background:linear-gradient(200deg,rgba(4,16,31,.05),rgba(4,16,31,.22));z-index:1}
+/* 仿聊天界面：固定高度窗口，消息自动滚动 */
+.chat-panel{display:flex;justify-content:center;background:linear-gradient(150deg,#16263F,#0A1428)}
+.chat-panel::after{display:none}
+.chat-mock{position:absolute;inset:20px auto;top:20px;bottom:20px;left:50%;transform:translateX(-50%);width:min(400px,calc(100% - 40px));background:#fff;border-radius:16px;box-shadow:0 24px 64px rgba(4,16,31,.5);display:flex;flex-direction:column;overflow:hidden}
+.chat-head{display:flex;align-items:center;gap:8px;background:#F2F4F8;padding:10px 14px;font-size:12px;color:var(--ink-soft);border-bottom:1px solid var(--line);flex-shrink:0}
+.chat-dot{width:7px;height:7px;border-radius:50%;background:#31C463;flex-shrink:0}
+.chat-time{margin-left:auto;color:var(--gold-deep);font-weight:500}
+.chat-screen{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:11px;scroll-behavior:smooth;scrollbar-width:none}
+.chat-screen::-webkit-scrollbar{display:none}
+.divider{align-self:center;font-size:10.5px;color:var(--ink-mute);background:#EFF2F6;border-radius:999px;padding:3px 11px;opacity:0;flex-shrink:0}
+.divider.show{animation:fadeOnly .5s ease forwards}
+.msg{display:flex;gap:8px;max-width:100%;opacity:0;flex-shrink:0}
+.msg .avt{width:28px;height:28px;border-radius:50%;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.msg.dev .avt{background:linear-gradient(135deg,var(--navy-900),var(--navy-700));color:var(--gold)}
+.msg.me{flex-direction:row-reverse}
+.msg.me .avt{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:var(--navy-950)}
+.msg-col{display:flex;flex-direction:column;max-width:78%;min-width:0}
+.msg .who{font-size:10.5px;color:var(--ink-mute);margin-bottom:5px}
+.msg.me .who{text-align:right;color:var(--gold-deep)}
+.msg .bubble{padding:9px 12px;border-radius:12px}
+.msg p{font-size:12.5px;line-height:1.65}
+.msg .t{font-size:10px;color:var(--ink-mute);margin-top:5px}
+.msg.me .msg-col{align-items:flex-end}
+.msg.me .bubble{background:linear-gradient(135deg,var(--gold),#F0C64F);color:var(--navy-950);border-bottom-right-radius:4px}
+.msg.dev .bubble{background:#F1F4F9;color:var(--ink);border-bottom-left-radius:4px}
+.todo{list-style:none;margin:9px 0 2px;display:flex;flex-direction:column;gap:6px}
+.todo li{display:flex;align-items:center;gap:8px;font-size:12px;line-height:1.5;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;opacity:0}
+.todo li::before{content:'✓';flex-shrink:0;width:15px;height:15px;border-radius:50%;background:var(--gold);color:var(--navy-950);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0)}
+.typing{display:flex;gap:4px;align-items:center;background:#F1F4F9;border-radius:12px;padding:8px 12px;opacity:0;flex-shrink:0}
+.typing i{width:5px;height:5px;border-radius:50%;background:#9AA7B8;animation:dotJump .9s infinite}
+.typing i:nth-child(2){animation-delay:.15s}
+.typing i:nth-child(3){animation-delay:.3s}
+/* 消息按 data-t 时间线由 JS 逐条点亮，方向随角色不同 */
+.msg.me.show{animation:fromRight .5s cubic-bezier(.16,1,.3,1) forwards}
+.msg.dev.show{animation:fromLeft .5s cubic-bezier(.16,1,.3,1) forwards}
+.divider.show{animation:fadeOnly .5s ease forwards}
+.typing.show{animation:typingLife .9s linear forwards}
+.todo li.show{animation:fromLeft .4s cubic-bezier(.16,1,.3,1) forwards}
+.todo li:nth-child(2n).show{animation-name:fromRight}
+.todo li.show::before{animation:checkPop .3s cubic-bezier(.34,1.56,.64,1) .18s forwards}
+.chat-foot{flex-shrink:0;margin:0 12px 12px;background:var(--navy-950);color:var(--gold);border-radius:11px;padding:9px 12px;font-size:12px;letter-spacing:.03em;text-align:center;opacity:0}
+.chat-foot.show{animation:footUp .5s cubic-bezier(.16,1,.3,1) forwards}
+@keyframes fromRight{from{opacity:0;transform:translateX(84px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes fromLeft{from{opacity:0;transform:translateX(-84px) scale(.9)}to{opacity:1;transform:none}}
+@keyframes headDown{from{opacity:0;transform:translateY(-26px)}to{opacity:1;transform:none}}
+@keyframes footUp{from{opacity:0;transform:translateY(36px)}to{opacity:1;transform:none}}
+@keyframes dotJump{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+@keyframes typingLife{0%{opacity:0}15%,72%{opacity:1}100%{opacity:0}}
+@keyframes checkPop{0%{opacity:0;transform:scale(0)}70%{opacity:1;transform:scale(1.3)}100%{opacity:1;transform:scale(1)}}
+@keyframes fadeOnly{from{opacity:0}to{opacity:1}}
+.why-visual .badge{position:absolute;bottom:-16px;right:-10px;z-index:2;background:var(--gold);color:var(--navy-950);font-weight:700;font-size:13px;padding:9px 18px;border-radius:999px;box-shadow:0 10px 26px rgba(201,148,23,.35);letter-spacing:.04em;animation:floaty 4.2s ease-in-out infinite}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.why-txt .why-index{font-family:var(--serif);color:var(--gold-deep);font-size:15px;letter-spacing:.3em;margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.why-txt .why-index::after{content:'';height:1px;width:52px;background:var(--gold)}
+.why-txt h3{font-family:var(--serif);font-size:clamp(21px,2.2vw,26px);font-weight:900;letter-spacing:.04em;margin-bottom:16px}
+.why-txt p{color:var(--ink-soft);font-size:15.5px;max-width:460px}
+@media(max-width:860px){
+  .why-row{grid-template-columns:1fr;gap:44px;margin-bottom:64px}
+  .why-row.reverse .why-visual{order:0}
+  .why-panel{min-height:250px}
+  .chat-panel{min-height:250px}
+}
+
+/* ============ 流程 ============ */
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:22px;position:relative}
+.step{text-align:center;position:relative;padding:0 6px}
+.step .step-dot{width:64px;height:64px;margin:0 auto 20px;border-radius:50%;background:#fff;border:1px solid #E7DDBB;display:flex;align-items:center;justify-content:center;position:relative;z-index:2;transition:.3s;box-shadow:var(--shadow-card)}
+.step:hover .step-dot{background:var(--gold);border-color:var(--gold);box-shadow:0 0 0 8px var(--gold-soft)}
+.step .step-dot svg{width:26px;height:26px;color:var(--navy-500);transition:color .3s}
+.step:hover .step-dot svg{color:var(--navy-950)}
+.step-dot svg path,.step-dot svg circle,.step-dot svg rect,.step-dot svg line,.step-dot svg polyline,.step-dot svg polygon{stroke-dasharray:1;stroke-dashoffset:1}
+.step.in .step-dot svg path,.step.in .step-dot svg circle,.step.in .step-dot svg rect,.step.in .step-dot svg line,.step.in .step-dot svg polyline,.step.in .step-dot svg polygon{animation:draw 1s ease .4s forwards}
+.step .step-no{color:var(--gold-deep);font-size:11.5px;letter-spacing:.34em;margin-bottom:8px}
+.step h3{color:var(--ink);font-family:var(--serif);font-size:17.5px;font-weight:700;letter-spacing:.05em;margin-bottom:10px}
+.step p{color:var(--ink-soft);font-size:13px;line-height:1.7}
+.step:not(:last-child)::after{content:'';position:absolute;top:32px;left:calc(50% + 42px);width:calc(100% - 84px);height:1px;background:linear-gradient(90deg,#E3D9BC,#F0EBDD);z-index:1}
+@media(max-width:1024px){
+  .steps{grid-template-columns:repeat(2,1fr);gap:40px 18px}
+  .step:not(:last-child)::after{display:none}
+}
+@media(max-width:520px){.steps{grid-template-columns:1fr}}
+
+/* ============ 案例（同色系：深蓝渐变 + 实拍图） ============ */
+.case-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px}
+.case-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;transition:transform .35s,box-shadow .35s}
+.case-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-card-hover)}
+.case-thumb{height:175px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--navy-900)}
+.case-thumb .case-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0}
+.case-thumb::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,16,31,.22),rgba(4,16,31,.5));z-index:1}
+.case-thumb .case-ico{width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);transition:transform .4s;position:relative;z-index:2}
+.case-card:hover .case-ico{transform:scale(1.12) rotate(-4deg)}
+.case-thumb .case-ico svg{width:30px;height:30px;color:var(--gold)}
+.case-thumb .case-type{position:absolute;top:14px;left:14px;font-size:11px;letter-spacing:.14em;color:#fff;background:rgba(4,16,31,.55);border:1px solid rgba(255,215,106,.35);padding:4px 12px;border-radius:999px;backdrop-filter:blur(4px);z-index:2}
+.case-thumb.photo{background-size:cover;background-position:center}
+.case-body{padding:26px 24px 28px}
+.case-body h3{font-family:var(--serif);font-size:17.5px;font-weight:700;margin-bottom:12px;letter-spacing:.02em}
+.case-line{display:flex;gap:9px;font-size:13.5px;color:var(--ink-soft);margin-bottom:8px;line-height:1.65}
+.case-line b{flex-shrink:0;color:var(--gold-deep);font-weight:700;font-size:12px;letter-spacing:.1em;padding-top:2px}
+@media(max-width:1024px){.case-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:640px){.case-grid{grid-template-columns:1fr}}
+
+/* ============ 关于我 ============ */
+.about-grid{display:grid;grid-template-columns:0.9fr 1.1fr;gap:70px;align-items:start}
+.about-card{background:linear-gradient(160deg,var(--navy-900),var(--navy-950));border-radius:20px;padding:44px 38px;color:#fff;position:relative;overflow:hidden;border:1px solid rgba(255,215,106,.16)}
+.about-card::after{content:'';position:absolute;top:-70px;right:-70px;width:220px;height:220px;border-radius:50%;background:radial-gradient(circle,rgba(255,215,106,.18),transparent 70%)}
+.about-card img{height:52px;width:auto;margin-bottom:26px}
+.about-card .about-name{font-family:var(--serif);font-size:21px;font-weight:900;letter-spacing:.05em;margin-bottom:4px}
+.about-card .about-role{color:var(--gold);font-size:13px;letter-spacing:.22em;margin-bottom:20px}
+.about-card p{color:#A9BCD8;font-size:14.5px;line-height:1.9}
+.about-card .about-sign{margin-top:24px;font-family:var(--serif);color:var(--gold);font-size:15px;letter-spacing:.14em}
+.skill h3,.industry h3{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:.04em;margin-bottom:24px;display:flex;align-items:center;gap:12px}
+.skill h3::before,.industry h3::before{content:'';width:4px;height:20px;background:linear-gradient(180deg,var(--gold),var(--gold-deep));border-radius:2px}
+.skill-item{margin-bottom:20px}
+.skill-item .sk-head{display:flex;justify-content:space-between;font-size:14px;margin-bottom:9px}
+.skill-item .sk-head b{font-weight:500;color:var(--ink)}
+.skill-item .sk-head span{color:var(--ink-mute);font-size:12.5px;letter-spacing:.05em}
+.sk-bar{height:6px;background:#EDEFF4;border-radius:99px;overflow:hidden}
+.sk-bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--navy-500),var(--gold-deep));width:0;transition:width 1.2s cubic-bezier(.22,.8,.3,1)}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chips span{font-size:13px;color:var(--ink-soft);border:1px solid var(--line);background:#fff;border-radius:999px;padding:7px 17px;letter-spacing:.03em;transition:.25s}
+.chips span:hover{border-color:var(--gold);color:var(--gold-deep);transform:translateY(-2px)}
+.industry{margin-top:40px}
+@media(max-width:900px){.about-grid{grid-template-columns:1fr;gap:48px}}
+
+/* ============ 评价 ============ */
+.quote-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:26px;position:relative;z-index:2}
+.quote-card{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:34px 28px;box-shadow:var(--shadow-card);transition:transform .35s,box-shadow .35s}
+.quote-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-card-hover)}
+.quote-card:hover .q-mark{animation:iconSwing .9s cubic-bezier(.34,1.56,.64,1)}
+.quote-card .q-mark{font-family:var(--serif);font-size:52px;line-height:1;color:var(--gold);height:40px}
+.quote-card p{color:var(--ink-soft);font-size:14.5px;line-height:1.95;margin-bottom:24px}
+.quote-card .q-who{display:flex;align-items:center;gap:13px;border-top:1px solid var(--line);padding-top:19px}
+.q-avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:var(--navy-950);font-weight:700;font-family:var(--serif);font-size:17px;display:flex;align-items:center;justify-content:center}
+.q-who .q-name{color:var(--ink);font-size:14px;font-weight:500}
+.q-who .q-role{color:var(--ink-mute);font-size:12px;margin-top:2px}
+@media(max-width:900px){.quote-grid{grid-template-columns:1fr;max-width:560px;margin:0 auto}}
+
+/* ============ FAQ ============ */
+.faq-list{max-width:820px;margin:0 auto}
+.faq-item{border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:14px;overflow:hidden;transition:border-color .3s,box-shadow .3s}
+.faq-item[open]{border-color:rgba(201,148,23,.55);box-shadow:var(--shadow-card)}
+.faq-item summary{list-style:none;display:flex;justify-content:space-between;align-items:center;gap:18px;padding:21px 26px;font-size:15.5px;font-weight:500;cursor:pointer}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary .faq-q{display:flex;align-items:center;gap:14px}
+.faq-item summary .faq-tag{flex-shrink:0;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,var(--navy-900),var(--navy-700));color:var(--gold);font-family:var(--serif);font-size:12.5px;display:flex;align-items:center;justify-content:center}
+.faq-item summary .faq-plus{flex-shrink:0;position:relative;width:16px;height:16px}
+.faq-item summary .faq-plus::before,.faq-item summary .faq-plus::after{content:'';position:absolute;background:var(--gold-deep);transition:transform .3s}
+.faq-item summary .faq-plus::before{left:0;top:7px;width:16px;height:2px}
+.faq-item summary .faq-plus::after{left:7px;top:0;width:2px;height:16px}
+.faq-item[open] summary .faq-plus::after{transform:scaleY(0)}
+.faq-item .faq-a{padding:0 26px 24px 66px;color:var(--ink-soft);font-size:14.5px;line-height:1.9}
+@media(max-width:560px){.faq-item .faq-a{padding-left:26px}}
+
+/* ============ 联系（深色收尾 + 圆形社媒图标，参考模板收尾） ============ */
+.contact{background:var(--navy-950);position:relative;overflow:hidden}
+.contact::before{content:'';position:absolute;inset:0;background:url('assets/contact-bg.jpg') center/cover;opacity:.08}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;position:relative;z-index:2}
+.contact-info .sec-en{color:var(--gold);font-size:12px;letter-spacing:.4em;text-transform:uppercase;margin-bottom:16px;display:block}
+.contact-info h2{font-family:var(--serif);color:#fff;font-size:clamp(28px,3.4vw,42px);font-weight:900;letter-spacing:.06em;margin-bottom:22px}
+.contact-info>p{color:#A9BCD8;font-size:15px;max-width:440px;margin-bottom:40px}
+.contact-ways{display:flex;flex-direction:column;margin-top:6px}
+.c-way{display:flex;align-items:center;gap:15px;padding:15px 6px;border-bottom:1px solid rgba(255,215,106,.14);transition:background .3s;border-radius:10px}
+.c-way:hover{background:rgba(255,215,106,.05)}
+.c-way .cw-ico{width:42px;height:42px;border-radius:50%;background:var(--gold-soft);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.c-way .cw-ico svg{width:19px;height:19px;color:var(--gold)}
+.c-way .cw-info{min-width:0}
+.c-way .cw-label{color:#8FA3C2;font-size:12px;letter-spacing:.1em}
+.c-way .cw-val{color:#fff;font-size:15.5px;font-weight:500;letter-spacing:.03em}
+.c-way .cw-note{font-size:11px;color:#7E96B8;margin-left:8px;font-weight:400}
+.cw-copy{flex-shrink:0;background:rgba(255,215,106,.1);border:1px solid rgba(255,215,106,.35);color:var(--gold);font-size:12px;padding:5px 16px;border-radius:999px;cursor:pointer;transition:.25s;letter-spacing:.05em}
+.cw-actions{margin-left:auto;display:flex;gap:8px;flex-shrink:0}
+.cw-copy:hover{background:var(--gold);color:var(--navy-950)}
+.cw-copy.done{background:#2E8B62;border-color:#2E8B62;color:#fff}
+/* 微信二维码弹层 */
+.qr-modal{position:fixed;inset:0;z-index:500;background:rgba(2,8,20,.78);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .3s,visibility .3s}
+.qr-modal.open{opacity:1;visibility:visible}
+.qr-card{position:relative;background:#fff;border-radius:18px;padding:24px 24px 20px;text-align:center;width:min(86vw,330px);transform:translateY(18px) scale(.95);transition:transform .4s cubic-bezier(.16,1,.3,1);box-shadow:0 40px 100px rgba(0,0,0,.55)}
+.qr-modal.open .qr-card{transform:none}
+.qr-card img{width:100%;border-radius:10px}
+.qr-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:28px;line-height:1;color:#9AA7B8;cursor:pointer;transition:color .25s}
+.qr-close:hover{color:var(--ink)}
+.qr-name{font-family:var(--serif);font-size:17px;font-weight:900;color:var(--ink);margin-top:14px}
+.qr-name span{font-size:12px;color:var(--ink-mute);font-weight:400;font-family:var(--sans)}
+.qr-sub{font-size:12.5px;color:var(--ink-soft);margin-top:5px}
+.qr-tip{margin-top:12px;background:#FDFAF1;border:1px solid rgba(201,148,23,.3);color:var(--gold-deep);font-size:12px;border-radius:999px;padding:6px 12px}
+.contact-tip{margin-top:18px;color:#7E96B8;font-size:12.5px;display:flex;align-items:center;gap:8px}
+.contact-tip svg{width:14px;height:14px;color:var(--gold);flex-shrink:0}
+.contact-form{background:rgba(255,255,255,.045);border:1px solid rgba(255,215,106,.22);border-radius:18px;padding:40px 36px;backdrop-filter:blur(8px)}
+.contact-form .form-title{color:#fff;font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:.05em;margin-bottom:26px}
+.f-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.f-group{margin-bottom:16px}
+.f-group label{display:block;color:#9AA9C4;font-size:12.5px;letter-spacing:.1em;margin-bottom:8px}
+.f-group label i{color:var(--gold);font-style:normal}
+.f-group input,.f-group select,.f-group textarea{width:100%;background:rgba(4,16,31,.6);border:1px solid rgba(255,215,106,.22);border-radius:10px;color:#fff;font-family:inherit;font-size:14.5px;padding:12px 15px;outline:none;transition:border-color .25s,box-shadow .25s}
+.f-group input:focus,.f-group select:focus,.f-group textarea:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(255,215,106,.12)}
+.f-group select option{color:var(--ink)}
+.f-group textarea{resize:vertical;min-height:110px}
+.f-group input::placeholder,.f-group textarea::placeholder{color:#5A7090}
+.contact-form .btn-gold{width:100%;justify-content:center;margin-top:8px}
+.form-note{color:#5A7090;font-size:12px;text-align:center;margin-top:15px}
+.social-row{display:flex;gap:16px;margin-top:34px}
+.s-ico{width:50px;height:50px;border-radius:50%;border:1px solid rgba(255,215,106,.35);display:flex;align-items:center;justify-content:center;transition:.3s}
+.s-ico svg{width:21px;height:21px;color:#C6D4E8;transition:color .3s}
+.s-ico:hover{border-color:var(--gold);background:var(--gold-soft);transform:translateY(-4px)}
+.s-ico:hover svg{color:var(--gold)}
+@media(max-width:900px){.contact-grid{grid-template-columns:1fr;gap:48px}.contact-form{padding:32px 24px}}
+@media(max-width:560px){.f-row{grid-template-columns:1fr}}
+
+/* ============ 页脚（极简一行） ============ */
+.footer{background:#020A14;border-top:1px solid rgba(255,215,106,.1);padding:22px 0;text-align:center;color:#5F7392;font-size:12.5px;letter-spacing:.06em}
+
+/* ============ 返回顶部 ============ */
+.to-top{position:fixed;right:26px;bottom:26px;width:46px;height:46px;border-radius:50%;background:var(--gold);color:var(--navy-950);border:none;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(201,148,23,.4);opacity:0;pointer-events:none;transform:translateY(14px);transition:.35s;z-index:90}
+.to-top.show{opacity:1;pointer-events:auto;transform:translateY(0)}
+.to-top svg{width:19px;height:19px}
+
+/* ============ 减弱动态（系统设置）：只保留淡入 ============ */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .hero .hero-bg{animation:none}
+  .loader{animation-duration:.3s;animation-delay:0s}
+  .loader img{animation:none}
+  .reveal,.reveal.in,.reveal.rl.in,.reveal.rr.in,.reveal.rz.in,.hero .ha,.hero .scroll-hint{animation:fadeOnly .5s ease both!important}
+  .reveal.in .sec-en,.reveal.in .sec-line,.case-card.in .case-img{animation:none}
+  .case-img,.case-card:hover .case-img,.why-img,.why-visual:hover .why-img{transform:none}
+  .case-card.in .case-img,.why-visual.in .why-img{animation:none}
+  .step .step-dot{transform:none;opacity:1}
+  .svc-icon,.svc-icon svg,.quote-card:hover .q-mark{animation:none!important;transform:none}
+  .svc-icon svg *,.step-dot svg *{stroke-dasharray:none;stroke-dashoffset:0;animation:none!important}
+  .why-panel svg path,.why-panel svg circle,.why-panel svg rect,.why-panel svg line,.why-panel svg polyline,.why-panel svg ellipse{stroke-dasharray:none;stroke-dashoffset:0;animation:none!important}
+  .why-panel .fl,.why-visual .badge{animation:none!important}
+  .msg,.todo li,.divider,.chat-foot,.chat-head,.chat-mock{opacity:1!important;transform:none!important;animation:none!important}
+  .todo li::before{opacity:1!important;transform:scale(1)!important;animation:none!important}
+  .typing{display:none}
+  .svc-more{opacity:1;transform:none}
+  @keyframes fadeOnly{from{opacity:0}to{opacity:1}}
+}
+</style>
+</head>
+<body>
+
+<!-- ===== 顶部滚动进度条 ===== -->
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ===== 打开网站的开场动画 ===== -->
+<div class="loader" id="loader" aria-hidden="true">
+  <img src="assets/logo-transparent.png" alt="">
+</div>
+
+<!-- ===== 导航（深色悬浮，Logo 回归） ===== -->
+<header class="header" id="header">
+  <div class="wrap">
+    <a class="brand" href="#top" aria-label="aiinfinite 首页">
+      <img src="assets/logo-transparent.png" alt="aiinfinite">
+    </a>
+    <nav class="nav" id="nav">
+      <a class="nav-link" href="#services">服务</a>
+      <a class="nav-link" href="#why">为什么选我</a>
+      <a class="nav-link" href="#process">合作流程</a>
+      <a class="nav-link" href="#cases">案例</a>
+      <a class="nav-link" href="#about">关于我</a>
+      <a class="nav-link" href="#faq">常见问题</a>
+      <a class="nav-cta" href="#contact">聊一个项目</a>
+    </nav>
+    <button class="burger" id="burger" aria-label="打开菜单"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<!-- ===== Hero ===== -->
+<section class="hero" id="top">
+  <div class="hero-bg"></div>
+  <div class="hero-veil"></div>
+  <div class="hero-inner">
+    <div class="hero-kicker ha ha1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/></svg>
+      个人软件开发 · 定制开发 · 长期维护
+    </div>
+    <h1 class="ha ha2">把您的想法<br>做成真正能用的软件</h1>
+    <div class="hero-en ha ha3">FROM IDEA TO SOFTWARE THAT WORKS</div>
+    <p class="hero-sub ha ha4">需求分析、界面设计、开发上线、后期维护——<strong>全程只对接我一个人</strong>。没有销售传话，没有外包转手，沟通零损耗。</p>
+    <div class="hero-actions ha ha5">
+      <a class="btn btn-gold" href="#contact">
+        免费评估需求
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </a>
+      <a class="btn btn-ghost" href="#cases">看看做过什么</a>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+  <!-- 数据条：首屏即见 -->
+  <div class="stats">
+    <div class="wrap">
+      <div class="stat reveal rz"><div class="num" data-count="30">0</div><div class="label">交付项目</div></div>
+      <div class="stat reveal rz d1"><div class="num"><span data-count="12">0</span><small>h</small></div><div class="label">平均响应时间</div></div>
+      <div class="stat reveal rz d2"><div class="num"><span data-count="100">0</span><small>%</small></div><div class="label">源码完整交付</div></div>
+      <div class="stat reveal rz d3"><div class="num" data-count="3">0</div><div class="label">年+ 持续维护经验</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 服务 ===== -->
+<section class="section dim" id="services">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-en">WHAT I BUILD</div>
+      <h2>我能为您<em>做什么</em></h2>
+      <div class="sec-line"></div>
+      <p class="sec-desc">从一个想法到上线运营，一个人对接全部环节。以下是常做的六类项目，没列到的也可以聊。</p>
+    </div>
+    <div class="svc-grid">
+      <div class="svc-card reveal rz">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+        <h3>企业官网 &amp; Web 应用</h3>
+        <p>响应式官网、H5 活动页、带后台的内容管理系统，SEO 友好，上线即可开始运营获客。</p>
+        <div class="svc-tags"><span>Vue / React</span><span>SEO 友好</span><span>响应式</span></div>
+        <a class="svc-more" href="#contact">聊聊这个方案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="svc-card reveal rz d1">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+        <h3>微信小程序</h3>
+        <p>预约、点单、会员、商城类小程序，从主体注册、类目审核到发布上架，全程代办。</p>
+        <div class="svc-tags"><span>微信支付</span><span>订阅消息</span><span>上架代办</span></div>
+        <a class="svc-more" href="#contact">聊聊这个方案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="svc-card reveal rz d2">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg></div>
+        <h3>移动端 App</h3>
+        <p>iOS / Android 双端应用与配套管理后台，跨端技术控制成本，协助应用商店上架。</p>
+        <div class="svc-tags"><span>双端适配</span><span>推送通知</span><span>商店上架</span></div>
+        <a class="svc-more" href="#contact">聊聊这个方案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="svc-card reveal rz d3">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v18H3zM3 9h18M9 21V9"/></svg></div>
+        <h3>管理系统</h3>
+        <p>进销存、客户管理、内部审批流，按您的真实业务流程量身定制，不套模板。</p>
+        <div class="svc-tags"><span>权限体系</span><span>数据报表</span><span>流程定制</span></div>
+        <a class="svc-more" href="#contact">聊聊这个方案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="svc-card reveal rz d4">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17V7m5 10V9m5 12V5m5 12v-6"/><circle cx="4" cy="19" r="1"/><circle cx="9" cy="19" r="1"/><circle cx="14" cy="19" r="1"/><circle cx="19" cy="19" r="1"/></svg></div>
+        <h3>Python 自动化 &amp; 数据</h3>
+        <p>数据采集、报表自动化、办公脚本、定时任务，把每天重复两小时的工作交给程序。</p>
+        <div class="svc-tags"><span>爬虫采集</span><span>报表生成</span><span>定时任务</span></div>
+        <a class="svc-more" href="#contact">聊聊这个方案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="svc-card reveal rz d5">
+        <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <h3>桌面软件 &amp; 工具</h3>
+        <p>Windows / macOS 桌面工具、设备配套上位机软件，支持离线使用与本地数据存储。</p>
+        <div class="svc-tags"><span>跨平台</span><span>离线可用</span><span>硬件对接</span></div>
+        <a class="svc-more" href="#contact">聊聊这个方案 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 为什么选我 ===== -->
+<section class="section" id="why">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-en">WHY INDEPENDENT</div>
+      <h2>为什么选择<em>个人开发者</em></h2>
+      <div class="sec-line"></div>
+      <p class="sec-desc">适合中小项目和个人客户的，往往不是一家公司，而是一个对结果负责的人。</p>
+    </div>
+
+    <div class="why-row">
+      <div class="why-visual reveal rl">
+        <div class="why-panel chat-panel">
+          <div class="chat-mock">
+            <div class="chat-head"><span class="chat-dot"></span>项目沟通 · 全程记录<span class="chat-time">平均 12h 内回复</span></div>
+            <div class="chat-screen">
+              <div class="divider" data-t="150">周二</div>
+              <div class="msg me" data-t="400">
+                <div class="avt">王</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>在吗？想给店里弄个手机上预约的，现在全靠电话登记，太乱了</p></div>
+                  <span class="t">14:02</span>
+                </div>
+              </div>
+              <div class="msg me" data-t="750">
+                <div class="avt">王</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>客户能自己选时间那种，最好还能自动提醒他们</p></div>
+                  <span class="t">14:03</span>
+                </div>
+              </div>
+              <div class="typing" data-t="1150"><i></i><i></i><i></i></div>
+              <div class="msg dev" data-t="1700">
+                <div class="avt">开</div>
+                <div class="msg-col">
+                  <div class="bubble">
+                    <p>在的。您的想法整理成清单就是这样：</p>
+                    <ul class="todo">
+                      <li data-t="2100">在线选服务、选时间</li>
+                      <li data-t="2250">到店前微信自动提醒</li>
+                      <li data-t="2400">会员次卡与储值</li>
+                      <li data-t="2550">后台看排班和流水</li>
+                    </ul>
+                    <span class="t">确认清单就开工，每一步都能看到</span>
+                  </div>
+                  <span class="t">14:05</span>
+                </div>
+              </div>
+              <div class="msg me" data-t="3000">
+                <div class="avt">王</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>行，按这个来</p></div>
+                  <span class="t">14:06</span>
+                </div>
+              </div>
+              <div class="divider" data-t="3400">周三 · 开发第 3 天</div>
+              <div class="msg dev" data-t="3800">
+                <div class="avt">开</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>演示版发您了，点开体验，不顺眼的地方现在提</p></div>
+                  <span class="t">09:30</span>
+                </div>
+              </div>
+              <div class="msg me" data-t="4400">
+                <div class="avt">王</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>挺好！预约流程还能再简单点吗</p></div>
+                  <span class="t">10:12</span>
+                </div>
+              </div>
+              <div class="msg dev" data-t="5000">
+                <div class="avt">开</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>改好了，两步：选服务 → 选时间，您再试试</p></div>
+                  <span class="t">10:40</span>
+                </div>
+              </div>
+              <div class="divider" data-t="5400">上线后 · 第 3 天</div>
+              <div class="msg dev" data-t="5800">
+                <div class="avt">开</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>昨晚巡检发现提醒有点延迟，已经修好上线了，您那边不用操作</p></div>
+                  <span class="t">23:47</span>
+                </div>
+              </div>
+              <div class="msg me" data-t="6400">
+                <div class="avt">王</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>你不说我都没发现，也太负责了</p></div>
+                  <span class="t">08:15</span>
+                </div>
+              </div>
+              <div class="divider" data-t="6800">一周后</div>
+              <div class="msg dev" data-t="7200">
+                <div class="avt">开</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>这周数据月报发您邮箱了，有新想法随时说，老项目迭代优先排</p></div>
+                  <span class="t">10:00</span>
+                </div>
+              </div>
+            </div>
+            <div class="chat-foot" data-t="7900">从需求到上线再到售后，每一次响应都有下文</div>
+          </div>
+        </div>
+        <div class="badge">沟通零损耗</div>
+      </div>
+      <div class="why-txt reveal rr d1">
+        <div class="why-index">01</div>
+        <h3>您说的每一句话，都直达写代码的人</h3>
+        <p>没有销售翻译需求，没有项目经理转述，更没有层层外包。想法直接变成代码，避免"做出来的不是您要的"——这是项目失败最常见的原因。</p>
+      </div>
+    </div>
+
+    <div class="why-row reverse">
+      <div class="why-visual reveal rl">
+        <div class="why-panel">
+          <img class="why-img" src="assets/why-sourcecode.jpg" alt="交付的完整源代码工程" loading="lazy">
+        </div>
+        <div class="badge">源码全交付</div>
+      </div>
+      <div class="why-txt reveal rr d1">
+        <div class="why-index">02</div>
+        <h3>代码、文档、账号，全部归您所有</h3>
+        <p>交付完整源码、数据库与部署文档，服务器和域名都登记在您名下。将来无论继续找我维护，还是换任何团队接手，都不会被"绑架"。</p>
+      </div>
+    </div>
+
+    <div class="why-row">
+      <div class="why-visual reveal rl">
+        <div class="why-panel">
+          <img class="why-img" src="assets/why-budget.jpg" alt="省下来并持续成长的预算" loading="lazy">
+        </div>
+        <div class="badge">预算更实在</div>
+      </div>
+      <div class="why-txt reveal rr d1">
+        <div class="why-index">03</div>
+        <h3>没有公司开销，预算花在刀刃上</h3>
+        <p>没有办公室租金，没有销售提成，没有层层管理成本。同样的预算，换来的是更多功能、更扎实的代码，和更长的免费维护期。</p>
+      </div>
+    </div>
+
+    <div class="why-row reverse">
+      <div class="why-visual reveal rl">
+        <div class="why-panel">
+          <img class="why-img" src="assets/why-maintenance.jpg" alt="上线后持续迭代维护代码" loading="lazy">
+        </div>
+        <div class="badge">长期维护</div>
+      </div>
+      <div class="why-txt reveal rr d1">
+        <div class="why-index">04</div>
+        <h3>上线不是结束，而是开始</h3>
+        <p>软件要陪着业务一起长大。上线后的 bug 修复、功能微调、新想法迭代，微信上直接说，不用再走一遍"提需求走流程"的漫长等待。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 合作流程 ===== -->
+<section class="section dim process" id="process">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-en">HOW IT WORKS</div>
+      <h2>五步，从想法到上线</h2>
+      <div class="sec-line"></div>
+      <p class="sec-desc">每一步都有明确产出，您随时知道项目进行到了哪里。</p>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+        <div class="step-no">STEP 01</div>
+        <h3>聊需求</h3>
+        <p>微信或电话沟通，帮您把模糊的想法梳理成清晰的需求清单。前期沟通免费。</p>
+      </div>
+      <div class="step reveal d1">
+        <div class="step-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 15h6M9 11h2"/></svg></div>
+        <div class="step-no">STEP 02</div>
+        <h3>方案与评估</h3>
+        <p>输出功能清单、技术方案与开发周期，双方确认后正式开工。</p>
+      </div>
+      <div class="step reveal d2">
+        <div class="step-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m18 16 4-4-4-4M6 8l-4 4 4 4M14.5 4l-5 16"/></svg></div>
+        <div class="step-no">STEP 03</div>
+        <h3>开发与演示</h3>
+        <p>按里程碑推进，每个阶段都有能点开的演示版，方向偏了随时纠。</p>
+      </div>
+      <div class="step reveal d3">
+        <div class="step-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+        <div class="step-no">STEP 04</div>
+        <h3>测试与验收</h3>
+        <p>您真实试用每个功能，问题清单逐条修完，再商量上线。</p>
+      </div>
+      <div class="step reveal d4">
+        <div class="step-dot"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09zM12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg></div>
+        <div class="step-no">STEP 05</div>
+        <h3>交付与维护</h3>
+        <p>交付源码文档，协助部署上线，之后长期提供维护与迭代支持。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 案例 ===== -->
+<section class="section" id="cases">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-en">SELECTED WORKS</div>
+      <h2>精选<em>项目案例</em></h2>
+      <div class="sec-line"></div>
+      <p class="sec-desc">每个项目，从客户的业务问题讲起。</p>
+    </div>
+    <div class="case-grid">
+      <div class="case-card reveal rz">
+        <div class="case-thumb">
+          <img class="case-img" src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=800&q=70" alt="预约小程序界面" loading="lazy">
+          <span class="case-type">小程序</span>
+          <div class="case-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M9 16l2 2 4-4"/></svg></div>
+        </div>
+        <div class="case-body">
+          <h3>连锁美容院预约系统</h3>
+          <div class="case-line"><b>问题</b><span>三家门店排班靠表格，客户爽约率高，前台天天打电话确认。</span></div>
+          <div class="case-line"><b>方案</b><span>微信小程序在线选店选技师，预约后自动提醒，爽约自动记录。</span></div>
+          <div class="case-line"><b>结果</b><span>前台省出人力，爽约情况明显下降，老板手机上随时看业绩。</span></div>
+        </div>
+      </div>
+      <div class="case-card reveal rz d1">
+        <div class="case-thumb">
+          <img class="case-img" src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=70" alt="数据看板界面" loading="lazy">
+          <span class="case-type">Web 系统</span>
+          <div class="case-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg></div>
+        </div>
+        <div class="case-body">
+          <h3>跨境电商选品数据看板</h3>
+          <div class="case-line"><b>问题</b><span>选品团队每天人工整理多平台数据，费时且口径不统一。</span></div>
+          <div class="case-line"><b>方案</b><span>Python 定时采集汇总，大屏看板展示趋势与利润测算。</span></div>
+          <div class="case-line"><b>结果</b><span>选品会从"翻表格"变成"看大屏"，数据口径全团队统一。</span></div>
+        </div>
+      </div>
+      <div class="case-card reveal rz d2">
+        <div class="case-thumb">
+          <img class="case-img" src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=70" alt="仓储扫码作业" loading="lazy">
+          <span class="case-type">PDA 系统</span>
+          <div class="case-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/></svg></div>
+        </div>
+        <div class="case-body">
+          <h3>仓储出入库扫码系统</h3>
+          <div class="case-line"><b>问题</b><span>小型仓储用纸质单据记账，错漏频繁，月底盘点两眼一抹黑。</span></div>
+          <div class="case-line"><b>方案</b><span>PDA 扫码出入库，库存实时同步，异常自动预警。</span></div>
+          <div class="case-line"><b>结果</b><span>账实相符，盘点不再加班，库管新人半天上手。</span></div>
+        </div>
+      </div>
+      <div class="case-card reveal rz d3">
+        <div class="case-thumb">
+          <img class="case-img" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=800&q=70" alt="案件资料协作" loading="lazy">
+          <span class="case-type">Web 平台</span>
+          <div class="case-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M3 7l9-4 9 4M5 7v10M19 7v10M3 21h18M5 21v-4M19 21v-4"/></svg></div>
+        </div>
+        <div class="case-body">
+          <h3>律所案件协作平台</h3>
+          <div class="case-line"><b>问题</b><span>案件资料散在各人电脑，进度靠开会口头同步。</span></div>
+          <div class="case-line"><b>方案</b><span>统一案件库，按案件归档材料，权限分级，节点自动提醒。</span></div>
+          <div class="case-line"><b>结果</b><span>案件进度一目了然，新人接手案件不再"考古"。</span></div>
+        </div>
+      </div>
+      <div class="case-card reveal rz d4">
+        <div class="case-thumb">
+          <img class="case-img" src="https://images.unsplash.com/photo-1485827404703-89b55fcc595e?auto=format&fit=crop&w=800&q=70" alt="智能硬件设备" loading="lazy">
+          <span class="case-type">移动 App</span>
+          <div class="case-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12a7 7 0 0 1 14 0M2 9a10 10 0 0 1 20 0"/><circle cx="12" cy="16" r="2"/><path d="M12 18v3"/></svg></div>
+        </div>
+        <div class="case-body">
+          <h3>智能硬件配套 App</h3>
+          <div class="case-line"><b>问题</b><span>硬件团队做出样机，缺少配套应用，无法向客户演示。</span></div>
+          <div class="case-line"><b>方案</b><span>蓝牙连接、实时数据展示、固件 OTA 升级，双端 App。</span></div>
+          <div class="case-line"><b>结果</b><span>产品顺利完成小批量交付，投资人演示直接用真机。</span></div>
+        </div>
+      </div>
+      <div class="case-card reveal rz d5">
+        <div class="case-thumb">
+          <img class="case-img" src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=800&q=70" alt="自动化脚本代码" loading="lazy">
+          <span class="case-type">自动化脚本</span>
+          <div class="case-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></div>
+        </div>
+        <div class="case-body">
+          <h3>新媒体内容排期自动化</h3>
+          <div class="case-line"><b>问题</b><span>多平台手动发布内容，排版重复劳动，经常错过发布时间。</span></div>
+          <div class="case-line"><b>方案</b><span>一键多平台分发脚本 + 排期日历提醒，失败自动重试。</span></div>
+          <div class="case-line"><b>结果</b><span>每周省出半天时间，团队把精力放回内容创作本身。</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 关于我 ===== -->
+<section class="section dim" id="about">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-en">ABOUT ME</div>
+      <h2>关于<em>我</em></h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="about-grid">
+      <div class="about-card reveal rl">
+        <img src="assets/logo-transparent.png" alt="aiinfinite">
+        <div class="about-name">aiinfinite</div>
+        <div class="about-role">独立软件开发者 · FULL-STACK DEVELOPER</div>
+        <p>写代码这几年，帮餐馆做过点单系统，也帮律所搭过案件库。我相信小团队和个人客户需要的不是大公司的流程，而是一个真正对结果负责的人。每个项目从需求到上线都由我亲手完成——所以每一个交付，都署着我的名字。</p>
+        <div class="about-sign">—— 路径无限，代码为证</div>
+      </div>
+      <div class="reveal rr d1">
+        <div class="skill">
+          <h3>技术栈</h3>
+          <div class="skill-item"><div class="sk-head"><b>Web 前端</b><span>Vue · React · TypeScript</span></div><div class="sk-bar"><i data-w="92%"></i></div></div>
+          <div class="skill-item"><div class="sk-head"><b>后端开发</b><span>Node.js · Python · PHP</span></div><div class="sk-bar"><i data-w="88%"></i></div></div>
+          <div class="skill-item"><div class="sk-head"><b>小程序 / App</b><span>微信生态 · 跨端开发</span></div><div class="sk-bar"><i data-w="85%"></i></div></div>
+          <div class="skill-item"><div class="sk-head"><b>数据库与部署</b><span>MySQL · Redis · Docker · 云服务器</span></div><div class="sk-bar"><i data-w="82%"></i></div></div>
+        </div>
+        <div class="industry">
+          <h3>服务过的行业</h3>
+          <div class="chips">
+            <span>餐饮零售</span><span>电商跨境</span><span>法律专业服务</span><span>智能硬件</span><span>新媒体内容</span><span>仓储物流</span><span>美容美业</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 客户评价 ===== -->
+<section class="section quotes" id="quotes">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-en">WHAT CLIENTS SAY</div>
+      <h2>客户怎么评价</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="quote-grid">
+      <div class="quote-card reveal rz">
+        <div class="q-mark">"</div>
+        <p>本来担心个人接单不靠谱，聊完发现他比之前找的外包公司还细心，每个阶段都能看到做出来的东西，心里有底。</p>
+        <div class="q-who"><div class="q-avatar">王</div><div><div class="q-name">王先生</div><div class="q-role">餐饮店老板 · 预约小程序</div></div></div>
+      </div>
+      <div class="quote-card reveal rz d1">
+        <div class="q-mark">"</div>
+        <p>系统上线之后，微信上随时找得到人。这种响应速度和责任感，之前问的几家大公司真给不了。</p>
+        <div class="q-who"><div class="q-avatar">李</div><div><div class="q-name">李女士</div><div class="q-role">跨境电商负责人 · 数据看板</div></div></div>
+      </div>
+      <div class="quote-card reveal rz d2">
+        <div class="q-mark">"</div>
+        <p>需求文档写得比我们自己还清楚，源码和文档齐全。后来团队扩张换了人接手，也没有任何压力。</p>
+        <div class="q-who"><div class="q-avatar">张</div><div><div class="q-name">张工</div><div class="q-role">硬件创业团队 · 配套 App</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 常见问题 ===== -->
+<section class="section dim" id="faq">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-en">FAQ</div>
+      <h2>您可能想问</h2>
+      <div class="sec-line"></div>
+    </div>
+    <div class="faq-list reveal">
+      <details class="faq-item" open>
+        <summary><span class="faq-q"><span class="faq-tag">Q1</span>合作是怎么开始的？</span><span class="faq-plus"></span></summary>
+        <div class="faq-a">微信上先聊需求——您用自己的话描述想做什么就行。我会帮您把模糊的想法梳理成一份清晰的功能清单和方案，双方确认后再正式开工。<b>前期沟通和方案评估都是免费的</b>，不满意随时可以停止，没有任何负担。</div>
+      </details>
+      <details class="faq-item">
+        <summary><span class="faq-q"><span class="faq-tag">Q2</span>开发周期一般要多久？</span><span class="faq-plus"></span></summary>
+        <div class="faq-a">取决于功能范围：官网、小程序类项目通常 2–4 周；管理系统、App 类项目一般 1–2 个月。开工前您会拿到一份带里程碑的时间表，每个阶段什么时候能看到什么，一目了然。</div>
+      </details>
+      <details class="faq-item">
+        <summary><span class="faq-q"><span class="faq-tag">Q3</span>交付时我能拿到什么？</span><span class="faq-plus"></span></summary>
+        <div class="faq-a">全部源代码、数据库、设计文件和部署文档，并协助把系统部署到<b>您名下</b>的服务器和账号上。也就是说，软件资产完全属于您，任何时候都可以让其他团队无缝接手。</div>
+      </details>
+      <details class="faq-item">
+        <summary><span class="faq-q"><span class="faq-tag">Q4</span>项目资料和商业信息会保密吗？</span><span class="faq-plus"></span></summary>
+        <div class="faq-a">会。可以在开工前签署保密协议；项目资料仅用于本项目开发，不会复用到其他项目，案例展示也会事先征得您同意。</div>
+      </details>
+      <details class="faq-item">
+        <summary><span class="faq-q"><span class="faq-tag">Q5</span>上线之后出问题怎么办？</span><span class="faq-plus"></span></summary>
+        <div class="faq-a">交付后有免费修复期，期间发现的任何问题都由我负责修完。之后可以按需约定长期维护，覆盖 bug 修复、小功能调整、服务器巡检等——微信上直接说，不用走漫长的工单流程。</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 联系 ===== -->
+<section class="section contact" id="contact">
+  <div class="wrap contact-grid">
+    <div class="contact-info reveal rl">
+      <span class="sec-en">READY TO START?</span>
+      <h2>聊一个项目</h2>
+      <p>把您的想法告诉我，12 小时内给您一份诚实的评估：能做，怎么做、要多久；暂时做不了，我也会告诉您为什么。</p>
+      <div class="contact-ways">
+        <div class="c-way">
+          <div class="cw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+          <div class="cw-info">
+            <div class="cw-label">微信（手机同号）</div>
+            <div class="cw-val">15201353705</div>
+          </div>
+          <div class="cw-actions">
+            <button type="button" class="cw-copy qr-open">扫码添加</button>
+            <button type="button" class="cw-copy" data-copy="15201353705">复制</button>
+          </div>
+        </div>
+        <div class="c-way">
+          <div class="cw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div>
+          <div class="cw-info">
+            <div class="cw-label">邮箱</div>
+            <div class="cw-val">3374680151@qq.com</div>
+          </div>
+          <button type="button" class="cw-copy" data-copy="3374680151@qq.com">复制</button>
+        </div>
+        <div class="c-way">
+          <div class="cw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div class="cw-info">
+            <div class="cw-label">响应时间</div>
+            <div class="cw-val">平均 12 小时内回复</div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-tip">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+        加微信请备注「做软件」，通过更快；前期需求评估免费
+      </div>
+    </div>
+    <form class="contact-form reveal rr d1" id="contactForm">
+      <div class="form-title">项目需求单</div>
+      <div class="f-row">
+        <div class="f-group">
+          <label>怎么称呼您 <i>*</i></label>
+          <input type="text" name="name" placeholder="如：王先生 / 李女士" required>
+        </div>
+        <div class="f-group">
+          <label>微信或手机 <i>*</i></label>
+          <input type="text" name="contact" placeholder="方便回复您的联系方式" required>
+        </div>
+      </div>
+      <div class="f-group">
+        <label>项目类型</label>
+        <select name="type">
+          <option>网站 / Web 应用</option>
+          <option>微信小程序</option>
+          <option>移动端 App</option>
+          <option>管理系统</option>
+          <option>Python 自动化 / 数据</option>
+          <option>桌面软件 / 其他</option>
+        </select>
+      </div>
+      <div class="f-group">
+        <label>想做的事情</label>
+        <textarea name="desc" placeholder="用自己的话描述就行，比如：我开了家宠物店，想做个小程序让客户在线预约洗澡……"></textarea>
+      </div>
+      <button type="submit" class="btn btn-gold">
+        发送需求
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+      </button>
+      <div class="form-note">发送后 12 小时内回复 · 前期评估免费 · 信息仅用于本次沟通</div>
+    </form>
+  </div>
+</section>
+
+<!-- ===== 页脚（极简一行） ===== -->
+<footer class="footer">
+  <div class="wrap">© 2026 aiinfinite · 个人软件开发工作室 · 把想法做成能用的软件</div>
+</footer>
+
+<!-- ===== 返回顶部 ===== -->
+<button class="to-top" id="toTop" aria-label="返回顶部">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 15l-6-6-6 6"/></svg>
+</button>
+
+<!-- ===== 微信二维码弹层 ===== -->
+<div class="qr-modal" id="qrModal" aria-hidden="true">
+  <div class="qr-card" role="dialog" aria-label="微信二维码">
+    <button class="qr-close" aria-label="关闭">&times;</button>
+    <img src="assets/wechat-qr.png" alt="微信二维码 · 慢慢">
+    <div class="qr-name">慢慢 <span>· 个人软件开发</span></div>
+    <div class="qr-sub">微信扫一扫，加我为朋友</div>
+    <div class="qr-tip">添加请备注「做软件」，通过更快</div>
+  </div>
+</div>
+
+<script>
+// 每次打开都从头播放入场动画
+if('scrollRestoration' in history){history.scrollRestoration='manual'}
+window.scrollTo(0,0);
+// 开场动画结束后移除遮罩，避免拦截点击
+window.addEventListener('load',()=>setTimeout(()=>{const l=document.getElementById('loader');if(l)l.remove()},1700));
+
+// 微信二维码弹层
+const qrModal=document.getElementById('qrModal');
+document.querySelectorAll('.qr-open').forEach(b=>b.addEventListener('click',()=>{qrModal.classList.add('open');qrModal.setAttribute('aria-hidden','false')}));
+const closeQr=()=>{qrModal.classList.remove('open');qrModal.setAttribute('aria-hidden','true')};
+qrModal.addEventListener('click',e=>{if(e.target===qrModal)closeQr()});
+qrModal.querySelector('.qr-close').addEventListener('click',closeQr);
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeQr()});
+
+// 移动端菜单
+const burger=document.getElementById('burger'),nav=document.getElementById('nav');
+function toggleMenu(open){
+  nav.classList.toggle('open',open);burger.classList.toggle('open',open);
+  document.body.style.overflow=open?'hidden':'';
+}
+burger.addEventListener('click',()=>toggleMenu(!nav.classList.contains('open')));
+nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>toggleMenu(false)));
+
+// 导航滚动变实底 + 顶部进度条
+const header=document.getElementById('header');
+const progress=document.getElementById('scrollProgress');
+function onScroll(){
+  header.classList.toggle('solid',window.scrollY>50);
+  const max=document.documentElement.scrollHeight-window.innerHeight;
+  progress.style.transform=`scaleX(${max>0?window.scrollY/max:0})`;
+}
+window.addEventListener('scroll',onScroll,{passive:true});onScroll();
+
+// 图标描边绘制准备（pathLength 归一化）
+document.querySelectorAll('.svc-icon svg, .step-dot svg, .why-panel svg').forEach(svg=>{
+  svg.querySelectorAll('path,circle,rect,line,polyline,polygon,ellipse').forEach(el=>el.setAttribute('pathLength','1'));
+});
+// 服务卡片光斑跟随鼠标
+document.querySelectorAll('.svc-card').forEach(card=>{
+  card.addEventListener('mousemove',e=>{
+    const r=card.getBoundingClientRect();
+    card.style.setProperty('--mx',(e.clientX-r.left)+'px');
+    card.style.setProperty('--my',(e.clientY-r.top)+'px');
+  });
+});
+
+// 滚动显现（入场动画）
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// 聊天演示：循环常驻（页面加载即按节奏播放，永不清空，任何时刻滚过来都有内容）
+const chatPanel=document.querySelector('.chat-panel');
+if(chatPanel){
+  const screen=chatPanel.querySelector('.chat-screen');
+  const items=[...chatPanel.querySelectorAll('[data-t]')].sort((a,b)=>(+a.dataset.t)-(+b.dataset.t));
+  const total=+items[items.length-1].dataset.t;
+  let timers=[];
+  const scrollDown=()=>screen.scrollTo({top:screen.scrollHeight,behavior:reduced?'auto':'smooth'});
+  const reset=()=>{timers.forEach(clearTimeout);timers=[];items.forEach(el=>el.classList.remove('show'));screen.scrollTo({top:0,behavior:'auto'})};
+  const play=()=>{
+    items.forEach(el=>timers.push(setTimeout(()=>{
+      el.classList.add('show');
+      if(!el.classList.contains('typing'))scrollDown();
+    },reduced?0:(+el.dataset.t))));
+  };
+  const cycle=()=>{reset();play();timers.push(setTimeout(cycle,total+2000))};
+  if(reduced){items.forEach(el=>el.classList.add('show'))}
+  else{cycle()}
+}
+
+// 数字滚动
+const nio=new IntersectionObserver(es=>es.forEach(e=>{
+  if(!e.isIntersecting)return;
+  const el=e.target,target=+el.dataset.count;
+  nio.unobserve(el);
+  if(reduced){el.textContent=target;return}
+  const t0=performance.now(),dur=1400;
+  (function tick(t){const p=Math.min((t-t0)/dur,1),ease=1-Math.pow(1-p,3);
+    el.textContent=Math.round(target*ease);
+    if(p<1)requestAnimationFrame(tick)})(t0);
+}),{threshold:.5});
+document.querySelectorAll('[data-count]').forEach(el=>nio.observe(el));
+
+// 技能条
+const sio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.style.width=e.target.dataset.w;sio.unobserve(e.target)}}),{threshold:.4});
+document.querySelectorAll('.sk-bar i').forEach(el=>sio.observe(el));
+
+// 返回顶部
+const toTop=document.getElementById('toTop');
+window.addEventListener('scroll',()=>{toTop.classList.toggle('show',window.scrollY>600)},{passive:true});
+toTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:reduced?'auto':'smooth'}));
+
+// 复制联系方式
+document.querySelectorAll('.cw-copy').forEach(btn=>btn.addEventListener('click',()=>{
+  const text=btn.dataset.copy;
+  const done=()=>{const old=btn.textContent;btn.textContent='已复制 ✓';btn.classList.add('done');
+    setTimeout(()=>{btn.textContent=old;btn.classList.remove('done')},1800)};
+  if(navigator.clipboard&&window.isSecureContext){navigator.clipboard.writeText(text).then(done).catch(()=>fallbackCopy(text,done))}
+  else fallbackCopy(text,done);
+}));
+function fallbackCopy(text,done){
+  const ta=document.createElement('textarea');ta.value=text;ta.style.position='fixed';ta.style.opacity='0';
+  document.body.appendChild(ta);ta.select();
+  try{document.execCommand('copy');done()}catch(e){}
+  document.body.removeChild(ta);
+}
+
+// 表单（静态演示：组装内容唤起邮件客户端）
+document.getElementById('contactForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const f=new FormData(e.target);
+  const body=`称呼：${f.get('name')}\n联系方式：${f.get('contact')}\n项目类型：${f.get('type')}\n\n需求描述：\n${f.get('desc')||'（未填写）'}`;
+  window.location.href=`mailto:3374680151@qq.com?subject=${encodeURIComponent('【官网需求单】'+f.get('name')+' - '+f.get('type'))}&body=${encodeURIComponent(body)}`;
+});
+</script>
+</body>
+</html>
