@@ -117,7 +117,8 @@ button{font-family:inherit;cursor:pointer}
 .hero{position:relative;min-height:calc(100vh - 78px);display:flex;align-items:center;background:var(--navy-950);overflow:hidden}
 .hero .hero-bg{position:absolute;inset:0;background:url('assets/hero-code.jpg') center/cover no-repeat;opacity:.42;animation:kenburns 24s ease-in-out infinite alternate}
 .hero .hero-veil{position:absolute;inset:0;background:linear-gradient(180deg,rgba(4,16,31,.72) 0%,rgba(4,16,31,.52) 45%,rgba(4,16,31,.94) 100%)}
-.hero .hero-inner{position:relative;z-index:2;text-align:center;width:100%;padding:120px 24px 190px}
+.hero .hero-inner{position:relative;z-index:2;text-align:center;width:min(660px,56%);margin-left:auto;margin-right:4%;padding:110px 20px 190px}
+@media(max-width:1024px){.hero .hero-inner{width:100%;margin:0 auto;padding:120px 24px 190px}}
 .hero .ha{opacity:0;animation:fadeUp .95s cubic-bezier(.22,.8,.3,1) forwards}
 .hero .ha1{animation-delay:1.15s}
 .hero .ha2{animation-delay:1.3s}
@@ -126,7 +127,7 @@ button{font-family:inherit;cursor:pointer}
 .hero .ha5{animation-delay:1.75s}
 .hero .hero-kicker{display:inline-flex;align-items:center;gap:10px;color:#F0DFAC;font-size:13.5px;letter-spacing:.42em;text-transform:uppercase;border:1px solid rgba(255,215,106,.38);padding:9px 22px;border-radius:999px;margin-bottom:34px;background:rgba(4,16,31,.35)}
 .hero .hero-kicker svg{width:14px;height:14px;color:var(--gold)}
-.hero h1{font-family:var(--serif);color:#fff;font-size:clamp(34px,5.4vw,66px);font-weight:900;letter-spacing:.06em;line-height:1.3;text-shadow:0 4px 30px rgba(0,0,0,.45)}
+.hero h1{font-family:var(--serif);color:#fff;font-size:clamp(32px,4.4vw,56px);font-weight:900;letter-spacing:.06em;line-height:1.3;text-shadow:0 4px 30px rgba(0,0,0,.45)}
 .hero .hero-en{color:#93A9C9;font-size:clamp(11px,1.3vw,15px);letter-spacing:.5em;text-transform:uppercase;margin:22px 0 26px}
 .hero .hero-sub{color:#C3D1E6;font-size:clamp(15px,1.5vw,17.5px);max-width:640px;margin:0 auto 44px;font-weight:300}
 .hero .hero-sub strong{color:var(--gold);font-weight:500}
@@ -212,34 +213,34 @@ button{font-family:inherit;cursor:pointer}
 .chat-head{display:flex;align-items:center;gap:8px;background:#F2F4F8;padding:10px 14px;font-size:12px;color:var(--ink-soft);border-bottom:1px solid var(--line);flex-shrink:0}
 .chat-dot{width:7px;height:7px;border-radius:50%;background:#31C463;flex-shrink:0}
 .chat-time{margin-left:auto;color:var(--gold-deep);font-weight:500}
-.chat-screen{flex:1;overflow-y:auto;padding:12px 12px 6px;display:flex;flex-direction:column;gap:11px;scroll-behavior:smooth;scrollbar-width:none}
+.chat-screen{flex:1;overflow-y:auto;padding:10px 11px 5px;display:flex;flex-direction:column;gap:8px;scroll-behavior:smooth;scrollbar-width:none}
 .chat-screen::-webkit-scrollbar{display:none}
-.divider{align-self:center;font-size:10.5px;color:var(--ink-mute);background:#EFF2F6;border-radius:999px;padding:3px 11px;opacity:0;flex-shrink:0}
+.divider{align-self:center;font-size:10px;color:var(--ink-mute);background:#EFF2F6;border-radius:999px;padding:2px 10px;opacity:0;flex-shrink:0}
 .divider.show{animation:fadeOnly .5s ease forwards}
 .msg{display:flex;gap:8px;max-width:100%;opacity:0;flex-shrink:0}
-.msg .avt{width:28px;height:28px;border-radius:50%;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.msg .avt{width:26px;height:26px;border-radius:50%;font-size:11.5px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
 .msg.dev .avt{background:linear-gradient(135deg,var(--navy-900),var(--navy-700));color:var(--gold)}
 .msg.me{flex-direction:row-reverse}
 .msg.me .avt{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:var(--navy-950)}
 .msg-col{display:flex;flex-direction:column;max-width:78%;min-width:0}
 .msg .who{font-size:10.5px;color:var(--ink-mute);margin-bottom:5px}
 .msg.me .who{text-align:right;color:var(--gold-deep)}
-.msg .bubble{padding:9px 12px;border-radius:12px}
-.msg p{font-size:12.5px;line-height:1.65}
+.msg .bubble{padding:8px 11px;border-radius:11px}
+.msg p{font-size:12px;line-height:1.6}
 .msg .t{font-size:10px;color:var(--ink-mute);margin-top:5px}
 .msg.me .msg-col{align-items:flex-end}
 .msg.me .bubble{background:linear-gradient(135deg,var(--gold),#F0C64F);color:var(--navy-950);border-bottom-right-radius:4px}
 .msg.dev .bubble{background:#F1F4F9;color:var(--ink);border-bottom-left-radius:4px}
 .todo{list-style:none;margin:9px 0 2px;display:flex;flex-direction:column;gap:6px}
-.todo li{display:flex;align-items:center;gap:8px;font-size:12px;line-height:1.5;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 10px;opacity:0}
+.todo li{display:flex;align-items:center;gap:7px;font-size:11.5px;line-height:1.45;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:8px;padding:5px 9px;opacity:0}
 .todo li::before{content:'✓';flex-shrink:0;width:15px;height:15px;border-radius:50%;background:var(--gold);color:var(--navy-950);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(0)}
 .typing{display:flex;gap:4px;align-items:center;background:#F1F4F9;border-radius:12px;padding:8px 12px;opacity:0;flex-shrink:0}
 .typing i{width:5px;height:5px;border-radius:50%;background:#9AA7B8;animation:dotJump .9s infinite}
 .typing i:nth-child(2){animation-delay:.15s}
 .typing i:nth-child(3){animation-delay:.3s}
 /* 消息按 data-t 时间线由 JS 逐条点亮，方向随角色不同 */
-.msg.me.show{animation:fromRight .5s cubic-bezier(.16,1,.3,1) forwards}
-.msg.dev.show{animation:fromLeft .5s cubic-bezier(.16,1,.3,1) forwards}
+.msg.me.show{animation:fromRight .4s cubic-bezier(.16,1,.3,1) forwards}
+.msg.dev.show{animation:fromLeft .4s cubic-bezier(.16,1,.3,1) forwards}
 .divider.show{animation:fadeOnly .5s ease forwards}
 .typing.show{animation:typingLife .9s linear forwards}
 .todo li.show{animation:fromLeft .4s cubic-bezier(.16,1,.3,1) forwards}
@@ -601,8 +602,8 @@ button{font-family:inherit;cursor:pointer}
                     <ul class="todo">
                       <li data-t="2100">在线选服务、选时间</li>
                       <li data-t="2250">到店前微信自动提醒</li>
-                      <li data-t="2400">会员次卡与储值</li>
-                      <li data-t="2550">后台看排班和流水</li>
+                      <li data-t="2350">会员次卡与储值</li>
+                      <li data-t="2500">后台看排班和流水</li>
                     </ul>
                     <span class="t">确认清单就开工，每一步都能看到</span>
                   </div>
@@ -616,8 +617,22 @@ button{font-family:inherit;cursor:pointer}
                   <span class="t">14:06</span>
                 </div>
               </div>
+              <div class="msg me" data-t="3700">
+                <div class="avt">王</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>对了，下单能用微信支付不</p></div>
+                  <span class="t">14:07</span>
+                </div>
+              </div>
+              <div class="msg dev" data-t="4150">
+                <div class="avt">开</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>可以，套餐购买直接拉起微信支付</p></div>
+                  <span class="t">14:08</span>
+                </div>
+              </div>
               <div class="divider" data-t="3400">周三 · 开发第 3 天</div>
-              <div class="msg dev" data-t="3800">
+              <div class="msg dev" data-t="4500">
                 <div class="avt">开</div>
                 <div class="msg-col">
                   <div class="bubble"><p>演示版发您了，点开体验，不顺眼的地方现在提</p></div>
@@ -638,7 +653,7 @@ button{font-family:inherit;cursor:pointer}
                   <span class="t">10:40</span>
                 </div>
               </div>
-              <div class="divider" data-t="5400">上线后 · 第 3 天</div>
+              <div class="divider" data-t="6100">上线后 · 第 3 天</div>
               <div class="msg dev" data-t="5800">
                 <div class="avt">开</div>
                 <div class="msg-col">
@@ -659,6 +674,20 @@ button{font-family:inherit;cursor:pointer}
                 <div class="msg-col">
                   <div class="bubble"><p>这周数据月报发您邮箱了，有新想法随时说，老项目迭代优先排</p></div>
                   <span class="t">10:00</span>
+                </div>
+              </div>
+              <div class="msg me" data-t="8700">
+                <div class="avt">王</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>对了，朋友也想做个预约系统，我把你推给他了</p></div>
+                  <span class="t">10:02</span>
+                </div>
+              </div>
+              <div class="msg dev" data-t="9100">
+                <div class="avt">开</div>
+                <div class="msg-col">
+                  <div class="bubble"><p>谢谢信任，老客户介绍的朋友优先排期</p></div>
+                  <span class="t">10:05</span>
                 </div>
               </div>
             </div>
@@ -975,7 +1004,9 @@ button{font-family:inherit;cursor:pointer}
             <div class="cw-label">邮箱</div>
             <div class="cw-val">3374680151@qq.com</div>
           </div>
-          <button type="button" class="cw-copy" data-copy="3374680151@qq.com">复制</button>
+          <div class="cw-actions">
+            <button type="button" class="cw-copy" data-copy="3374680151@qq.com">复制</button>
+          </div>
         </div>
         <div class="c-way">
           <div class="cw-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
