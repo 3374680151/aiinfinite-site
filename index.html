@@ -8,6 +8,8 @@
 <link rel="icon" href="assets/aiinfinite-logo-flow-compact.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preload" as="image" href="assets/hero-code.webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/logo-transparent.webp">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 /* ==================================================
@@ -115,7 +117,7 @@ button{font-family:inherit;cursor:pointer}
 
 /* ============ Hero（深色大图 + 入场动画） ============ */
 .hero{position:relative;min-height:calc(100vh - 78px);display:flex;align-items:center;background:var(--navy-950);overflow:hidden}
-.hero .hero-bg{position:absolute;inset:0;background:url('assets/hero-code.jpg') center/cover no-repeat;opacity:.58;animation:kenburns 24s ease-in-out infinite alternate}
+.hero .hero-bg{position:absolute;inset:0;background:url('assets/hero-code.webp') center/cover no-repeat;opacity:.58;animation:kenburns 24s ease-in-out infinite alternate}
 .hero .hero-veil{position:absolute;inset:0;background:linear-gradient(270deg,rgba(4,16,31,.8) 8%,rgba(4,16,31,.2) 50%,rgba(4,16,31,.85) 100%),linear-gradient(180deg,rgba(4,16,31,.4) 0%,rgba(4,16,31,.18) 45%,rgba(4,16,31,.85) 100%)}
 .hero .hero-inner{position:relative;z-index:2;text-align:center;width:min(660px,56%);margin-left:auto;margin-right:4%;padding:110px 20px 190px}
 @media(min-width:1600px){.hero .hero-inner{width:min(760px,48%);margin-right:6%}}
@@ -362,7 +364,7 @@ button{font-family:inherit;cursor:pointer}
 
 /* ============ 联系（深色收尾 + 圆形社媒图标，参考模板收尾） ============ */
 .contact{background:var(--navy-950);position:relative;overflow:hidden}
-.contact::before{content:'';position:absolute;inset:0;background:url('assets/contact-bg.jpg') center/cover;opacity:.08}
+.contact::before{content:'';position:absolute;inset:0;background:url('assets/contact-bg.webp') center/cover;opacity:.08}
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;position:relative;z-index:2}
 .contact-info .sec-en{color:var(--gold);font-size:12px;letter-spacing:.4em;text-transform:uppercase;margin-bottom:16px;display:block}
 .contact-info h2{font-family:var(--serif);color:#fff;font-size:clamp(28px,3.4vw,42px);font-weight:900;letter-spacing:.06em;margin-bottom:22px}
@@ -453,14 +455,14 @@ button{font-family:inherit;cursor:pointer}
 
 <!-- ===== 打开网站的开场动画 ===== -->
 <div class="loader" id="loader" aria-hidden="true">
-  <img src="assets/logo-transparent.png" alt="">
+  <img src="assets/logo-transparent.webp" alt="">
 </div>
 
 <!-- ===== 导航（深色悬浮，Logo 回归） ===== -->
 <header class="header" id="header">
   <div class="wrap">
     <a class="brand" href="#top" aria-label="aiinfinite 首页">
-      <img src="assets/logo-transparent.png" alt="aiinfinite">
+      <img src="assets/logo-transparent.webp" alt="aiinfinite">
     </a>
     <nav class="nav" id="nav">
       <a class="nav-link" href="#services">服务</a>
@@ -707,7 +709,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="why-row reverse">
       <div class="why-visual reveal rl">
         <div class="why-panel">
-          <img class="why-img" src="assets/why-sourcecode.jpg" alt="交付的完整源代码工程" loading="lazy">
+          <img class="why-img" src="assets/why-sourcecode.webp" alt="交付的完整源代码工程" loading="lazy">
         </div>
         <div class="badge">源码全交付</div>
       </div>
@@ -721,7 +723,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="why-row">
       <div class="why-visual reveal rl">
         <div class="why-panel">
-          <img class="why-img" src="assets/why-budget.jpg" alt="省下来并持续成长的预算" loading="lazy">
+          <img class="why-img" src="assets/why-budget.webp" alt="省下来并持续成长的预算" loading="lazy">
         </div>
         <div class="badge">预算更实在</div>
       </div>
@@ -735,7 +737,7 @@ button{font-family:inherit;cursor:pointer}
     <div class="why-row reverse">
       <div class="why-visual reveal rl">
         <div class="why-panel">
-          <img class="why-img" src="assets/why-maintenance.jpg" alt="上线后持续迭代维护代码" loading="lazy">
+          <img class="why-img" src="assets/why-maintenance.webp" alt="上线后持续迭代维护代码" loading="lazy">
         </div>
         <div class="badge">长期维护</div>
       </div>
@@ -894,7 +896,7 @@ button{font-family:inherit;cursor:pointer}
     </div>
     <div class="about-grid">
       <div class="about-card reveal rl">
-        <img src="assets/logo-transparent.png" alt="aiinfinite">
+        <img src="assets/logo-transparent.webp" alt="aiinfinite">
         <div class="about-name">aiinfinite</div>
         <div class="about-role">独立软件开发者 · FULL-STACK DEVELOPER</div>
         <p>写代码这几年，帮餐馆做过点单系统，也帮律所搭过案件库。我相信小团队和个人客户需要的不是大公司的流程，而是一个真正对结果负责的人。每个项目从需求到上线都由我亲手完成——所以每一个交付，都署着我的名字。</p>
@@ -1072,7 +1074,7 @@ button{font-family:inherit;cursor:pointer}
 <div class="qr-modal" id="qrModal" aria-hidden="true">
   <div class="qr-card" role="dialog" aria-label="微信二维码">
     <button class="qr-close" aria-label="关闭">&times;</button>
-    <img src="assets/wechat-qr.png" alt="微信二维码 · 慢慢">
+    <img src="assets/wechat-qr.png" loading="lazy" alt="微信二维码 · 慢慢">
     <div class="qr-name">慢慢 <span>· 个人软件开发</span></div>
     <div class="qr-sub">微信扫一扫，加我为朋友</div>
     <div class="qr-tip">添加请备注「做软件」，通过更快</div>
